@@ -59,6 +59,7 @@ void report_handler (Soup.Server server, Soup.Message msg, string path, HashTabl
 
 	if (int.parse(result.get_value (0, 0)) > 0)
         {
+            db.exec (@"UPDATE leaderboard SET score=$(score) WHERE identifier='$(identifier)' AND score < $(score)");
         }
         else
         {
