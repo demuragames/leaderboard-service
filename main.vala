@@ -4,14 +4,14 @@ class Player
 {
     public string identifier;
     public int score;
-    public Player(string i, int s) {identifier = i; score = s;}
+    public Player (string i, int s) {identifier = i; score = s;}
 }
 
 Postgres.Database db;
 
 List<Player> get_top_players ()
 {
-    List<Player> list = new List<Player>();
+    List<Player> list = new List<Player> ();
 
     var result = db.exec ("SELECT * FROM leaderboard ORDER BY score DESC LIMIT 10");
     if (result.get_status () != Postgres.ExecStatus.TUPLES_OK)
@@ -23,8 +23,8 @@ List<Player> get_top_players ()
     for (int i = 0; i < result.get_n_tuples(); i++)
     {
         string identifier = result.get_value (i, 0);//.strip();
-        int score = int.parse(result.get_value (i, 1));
-    	list.append(new Player(identifier, score));
+        int score = int.parse (result.get_value (i, 1));
+    	list.append (new Player (identifier, score));
     }
 
     return list;
@@ -45,10 +45,10 @@ void report_handler (Soup.Server server, Soup.Message msg, string path, HashTabl
 {
     HashTable<string, string> table = (HashTable<string, string>)query;
 
-    if (table.contains("id") && table.contains("score"))
+    if (table.contains ("id") && table.contains ("score"))
     {
-        string identifier = table.get("id");
-        int score = int.parse(table.get("score"));
+        string identifier = table.get ("id");
+        int score = int.parse (table.get ("score"));
 
         var result = db.exec (@"SELECT count(*) FROM leaderboard WHERE identifier='$(identifier)'");
         if (result.get_status () != Postgres.ExecStatus.TUPLES_OK)
@@ -57,7 +57,7 @@ void report_handler (Soup.Server server, Soup.Message msg, string path, HashTabl
             return;
         }
 
-	if (int.parse(result.get_value (0, 0)) > 0)
+	if (int.parse (result.get_value (0, 0)) > 0)
         {
             db.exec (@"UPDATE leaderboard SET score=$(score) WHERE identifier='$(identifier)' AND score < $(score)");
         }
