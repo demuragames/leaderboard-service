@@ -34,9 +34,11 @@ void top_handler (Soup.Server server, Soup.Message msg, string path, HashTable? 
 {
     List<Player> top_players = get_top_players ();
     string response_text = "";
+
     foreach (Player player in top_players)
     {
         response_text += @"$(player.identifier) $(player.score)\n";
+	stdout.printf(response_text);
     }
     msg.set_response ("text/plain", Soup.MemoryUse.COPY, response_text.data);
 }
