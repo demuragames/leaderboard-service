@@ -38,7 +38,6 @@ void top_handler (Soup.Server server, Soup.Message msg, string path, HashTable? 
     foreach (Player player in top_players)
     {
         response_text += @"$(player.identifier) $(player.score)\n";
-	stdout.printf(response_text);
     }
     msg.set_response ("text/plain", Soup.MemoryUse.COPY, response_text.data);
 }
@@ -70,8 +69,12 @@ void report_handler (Soup.Server server, Soup.Message msg, string path, HashTabl
     }
 }
 
+extern void daemonize ();
+
 int main (string[] args)
 {
+    daemonize();
+
     db = Postgres.connect_db ("host=postgres8.1gb.ua port=5432 dbname=xgbua_flappy user=xgbua_flappy password=18f2f978e0");
     if (db.get_status () != Postgres.ConnectionStatus.OK)
     {
