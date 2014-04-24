@@ -71,11 +71,59 @@ void report_handler (Soup.Server server, Soup.Message msg, string path, HashTabl
 
 extern void daemonize ();
 
+int port = 5432;
+string? host = null;
+string? dbname = null;
+string? user = null;
+string? password = null;
+
+const OptionEntry[] options =
+{
+    { "host",     'w', 0, OptionArg.STRING, ref host,     N_("PostgreSQL server host name"),   N_("HOST")     },
+    { "port",     'd', 0, OptionArg.INT,    ref port,     N_("PostgreSQL server port number"), N_("PORT")     },
+    { "dbname",   'v', 0, OptionArg.STRING, ref dbname,   N_("PostgreSQL database name"),      N_("DATABASE") },
+    { "user",     'f', 0, OptionArg.STRING, ref user,     N_("PostgreSQL user name"),          N_("USER")     },
+    { "password", 'p', 0, OptionArg.STRING, ref password, N_("PostgreSQL password"),           N_("PASSWORD") },
+    { null }
+};
+
 int main (string[] args)
 {
+    host = "localhost";
+
+    try 
+    {
+        var opt_context = new OptionContext ("- Starts leaderboard server as daemon");
+        opt_context.set_help_enabled (true);
+        opt_context.add_main_entries (options, null);
+        opt_context.parse (ref args);
+
+        if (dbname == null)
+        {
+            throw new GLib.OptionError.FAILED ("database name is not specified");
+        }
+        if (user == null)
+        {
+            throw new GLib.OptionError.FAILED ("user name is not specified");
+        }
+        if (password == null)
+        {
+            throw new GLib.OptionError.FAILED ("password is not specified");
+        }
+    }
+    catch (OptionError e)
+    {
+        stdout.printf ("error: %s\n", e.message);
+        stdout.printf ("Run '%s --help' to see a full list of available command line options.\n", args[0]);
+        return 0;
+    }
+    finally
+    {
+    }
+
     daemonize();
 
-    db = Postgres.connect_db ("host=postgres8.1gb.ua port=5432 dbname=xgbua_flappy user=xgbua_flappy password=18f2f978e0");
+    db = Postgres.connect_db (@"host=$host port=$port dbname=$dbname user=$user password=$password");
     if (db.get_status () != Postgres.ConnectionStatus.OK)
     {
         stderr.printf ("Connection to database failed: %s", db.get_error_message ());
