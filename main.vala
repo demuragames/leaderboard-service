@@ -24,7 +24,7 @@ List<Player> get_top_players ()
     {
         string identifier = result.get_value (i, 0);//.strip();
         int score = int.parse (result.get_value (i, 1));
-    	list.append (new Player (identifier, score));
+        list.append (new Player (identifier, score));
     }
 
     return list;
@@ -130,11 +130,20 @@ int main (string[] args)
         return 1;
     }
 
-    Soup.Server server = new Soup.Server (Soup.SERVER_PORT, 8080);
+    Soup.Server server = new Soup.Server ();
     server.add_handler ("/top", top_handler);
     server.add_handler ("/report", report_handler);
-    server.run ();
+    server.listen_all (8080, 0);
+
+    GLib.MainLoop loop = new GLib.MainLoop ();
+    loop.run ();
 
     return 0;
 }
+
+
+
+
+
+
 
