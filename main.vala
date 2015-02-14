@@ -130,13 +130,20 @@ int main (string[] args)
         return 1;
     }
 
-    Soup.Server server = new Soup.Server ();
+    Soup.Server server = new Soup.Server (Soup.SERVER_PORT, 8088);
     server.add_handler ("/top", top_handler);
     server.add_handler ("/report", report_handler);
-    server.listen_all (8080, 0);
 
-    GLib.MainLoop loop = new GLib.MainLoop ();
-    loop.run ();
+    try
+    {
+        server.listen_all (8080, 0);
+
+        GLib.MainLoop loop = new GLib.MainLoop ();
+        loop.run ();
+    }
+    finally
+    {
+    }
 
     return 0;
 }
