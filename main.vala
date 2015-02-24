@@ -130,7 +130,7 @@ int main (string[] args)
         return 1;
     }
 
-    Soup.Server server = new Soup.Server (Soup.SERVER_PORT, 8088);
+    Soup.Server server = new Soup.Server (Soup.SERVER_SERVER_HEADER, "leaderboard-service ");
     server.add_handler ("/top", top_handler);
     server.add_handler ("/report", report_handler);
 
